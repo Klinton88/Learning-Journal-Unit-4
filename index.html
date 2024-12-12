@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotating Cube with Textures</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: red !important;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Create scene, camera, and renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Load textures
+    const textureLoader = new THREE.TextureLoader();
+    const textures = [
+      textureLoader.load('texture1.jpg'), // Replace with your own textures
+      textureLoader.load('texture2.jpg'),
+      textureLoader.load('texture3.jpg'),
+      textureLoader.load('texture4.jpg')
+    ];
+
+    // Create cube geometry and apply textures
+    const geometry = new THREE.BoxGeometry();
+    const materials = [
+      new THREE.MeshBasicMaterial({map: textures[0]}),
+      new THREE.MeshBasicMaterial({map: textures[1]}),
+      new THREE.MeshBasicMaterial({map: textures[2]}),
+      new THREE.MeshBasicMaterial({map: textures[3]}),
+      new THREE.MeshBasicMaterial({color: 0xeeeeee}), // Side facing away from the camera
+      new THREE.MeshBasicMaterial({color: 0xeeeeee})  // Side facing towards the camera
+    ];
+    const cube = new THREE.Mesh(geometry, materials);
+    scene.add(cube);
+
+    // Set up camera position
+    camera.position.z = 5;
+
+    // Add lighting to the scene
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(5, 5, 5).normalize();
+    scene.add(light);
+
+    // Set rotation speed
+    let rotateSpeed = 0.01;
+
+    // Function to animate the cube
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Rotate the cube
+      cube.rotation.x += rotateSpeed;
+      cube.rotation.y += rotateSpeed;
+
+      // Render the scene
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Handle user input for rotation control (keyboard arrows)
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        rotateSpeed = -0.01;  // Rotate counter-clockwise
+      } else if (event.key === 'ArrowRight') {
+        rotateSpeed = 0.01;  // Rotate clockwise
+      }
+    });
+
+    // Handle window resizing
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+  </script>
+</body>
+
+</html>
